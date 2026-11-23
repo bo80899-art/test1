@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eef5ff">
+  <title>키보드 탐험대 | 타자 연습</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f5f8ff;
+      --surface: #ffffff;
+      --surface-soft: #f7faff;
+      --ink: #1d2b45;
+      --muted: #75839b;
+      --line: #e7edf7;
+      --blue: #536df3;
+      --blue-dark: #3e57db;
+      --blue-soft: #edf0ff;
+      --mint: #25b99a;
+      --mint-soft: #e8faf5;
+      --red: #e35b69;
+      --red-soft: #fff0f1;
+      --shadow: 0 16px 42px rgba(48, 69, 117, .08);
+      --radius: 22px;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --page: #121827;
+      --surface: #1b2435;
+      --surface-soft: #222d41;
+      --ink: #edf2ff;
+      --muted: #a1aec4;
+      --line: #303d54;
+      --blue: #8998ff;
+      --blue-dark: #a3adff;
+      --blue-soft: #2b3454;
+      --mint: #65d8bb;
+      --mint-soft: #203d3b;
+      --red: #ff8994;
+      --red-soft: #472e3b;
+      --shadow: 0 16px 42px rgba(0, 0, 0, .2);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(ellipse at 8% 0%, rgba(119, 161, 255, .13), transparent 34rem),
+        radial-gradient(ellipse at 95% 15%, rgba(91, 220, 187, .12), transparent 30rem),
+        var(--page);
+      color: var(--ink);
+      font-family: "DM Sans", "Noto Sans KR", sans-serif;
+      line-height: 1.55;
+      transition: background-color .2s ease, color .2s ease;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(83, 109, 243, .35);
+      outline-offset: 2px;
+    }
+
+    .page-shell { width: min(1120px, calc(100% - 36px)); margin: 0 auto; padding: 28px 0 54px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 26px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      display: grid; place-items: center; width: 46px; height: 46px; border-radius: 15px;
+      background: linear-gradient(140deg, #6f86ff, #4f62e6); color: #fff; font-size: 23px;
+      box-shadow: 0 8px 18px rgba(83, 109, 243, .25);
+    }
+    .brand-name { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -.04em; }
+    .brand-caption { margin: 1px 0 0; color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .icon-button, .button-secondary {
+      border: 1px solid var(--line); background: var(--surface); cursor: pointer; transition: .18s ease;
+    }
+    .icon-button { width: 42px; height: 42px; border-radius: 14px; font-size: 18px; }
+    .icon-button:hover, .button-secondary:hover { border-color: var(--blue); transform: translateY(-1px); }
+    .button-secondary { border-radius: 13px; padding: 10px 14px; font-size: 13px; font-weight: 700; }
+
+    .hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin: 0 2px 22px; }
+    .eyebrow { color: var(--blue); font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 5px 0 5px; font-size: clamp(26px, 4vw, 36px); letter-spacing: -.06em; line-height: 1.2; }
+    .hero-copy { margin: 0; color: var(--muted); font-size: 14px; }
+    .local-note { flex: 0 0 auto; color: var(--muted); font-size: 11px; }
+
+    .profile-card, .panel, .practice-card {
+      border: 1px solid rgba(221, 230, 245, .78);
+      border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow);
+    }
+    :root[data-theme="dark"] .profile-card,
+    :root[data-theme="dark"] .panel,
+    :root[data-theme="dark"] .practice-card { border-color: var(--line); }
+
+    .profile-card { display: grid; grid-template-columns: minmax(170px, 1fr) repeat(3, minmax(105px, 155px)); align-items: end; gap: 13px; padding: 17px 20px; margin-bottom: 18px; }
+    .profile-intro { align-self: center; }
+    .profile-intro strong { display: block; font-size: 14px; }
+    .profile-intro span { color: var(--muted); font-size: 11px; }
+    .field label { display: block; margin: 0 0 5px 2px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .field input {
+      width: 100%; min-width: 0; padding: 9px 11px; border: 1px solid var(--line); border-radius: 11px;
+      background: var(--surface-soft); color: var(--ink); font-size: 13px;
+    }
+    .storage-message { display: none; padding: 10px 13px; margin: 0 0 16px; border-radius: 12px; background: var(--red-soft); color: var(--red); font-size: 12px; }
+    .storage-message.visible { display: block; }
+
+    .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 18px; }
+    .metric {
+      min-width: 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface);
+      box-shadow: 0 8px 24px rgba(48, 69, 117, .045);
+    }
+    .metric-label { display: flex; justify-content: space-between; gap: 8px; align-items: center; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .metric-icon { font-size: 15px; }
+    .metric-value { display: block; margin-top: 5px; font-size: clamp(24px, 3vw, 31px); font-weight: 800; letter-spacing: -.06em; line-height: 1.2; }
+    .metric-unit { margin-left: 5px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0; }
+
+    .practice-card { overflow: hidden; margin-bottom: 20px; }
+    .practice-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 18px 22px 14px; border-bottom: 1px solid var(--line); }
+    .section-title { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: -.04em; }
+    .practice-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+    .segmented { display: flex; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-soft); }
+    .segmented button {
+      border: 0; border-radius: 9px; padding: 7px 10px; background: transparent; color: var(--muted);
+      cursor: pointer; font-size: 11px; font-weight: 700;
+    }
+    .segmented button.active { background: var(--surface); color: var(--blue); box-shadow: 0 2px 8px rgba(30, 50, 90, .1); }
+    .button-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 12px;
+      padding: 10px 15px; background: var(--blue); color: #fff; cursor: pointer; font-size: 12px; font-weight: 800;
+      box-shadow: 0 6px 15px rgba(83, 109, 243, .2); transition: .18s ease;
+    }
+    .button-primary:hover { background: var(--blue-dark); transform: translateY(-1px); }
+    .practice-body { padding: 20px 22px 22px; }
+    .passage-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 9px; }
+    .passage-tag { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .passage-tag::before { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); content: ""; }
+    .passage-count { color: var(--muted); font-size: 11px; }
+    .passage {
+      min-height: 102px; max-height: 225px; overflow: auto; padding: 18px 19px; border: 1px solid var(--line);
+      border-radius: 16px; background: var(--surface-soft); font-size: clamp(17px, 2.2vw, 20px);
+      font-weight: 500; letter-spacing: -.025em; line-height: 1.95; white-space: pre-wrap; overflow-wrap: anywhere;
+    }
+    .passage .correct { color: var(--mint); }
+    .passage .incorrect { border-radius: 3px; background: var(--red-soft); color: var(--red); }
+    .passage .caret { box-shadow: inset 0 -2px 0 var(--blue); }
+    .typing-input {
+      display: block; width: 100%; min-height: 102px; margin-top: 10px; resize: vertical; padding: 16px 18px;
+      border: 2px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink);
+      font-size: clamp(17px, 2.2vw, 20px); font-weight: 500; letter-spacing: -.025em; line-height: 1.8;
+      transition: border-color .15s ease;
+    }
+    .typing-input:focus { border-color: var(--blue); outline: none; }
+    .typing-input::placeholder { color: #aab5c7; }
+    .typing-input:disabled { opacity: .7; }
+    .practice-footer { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 12px; }
+    .hint { margin: 0; color: var(--muted); font-size: 11px; }
+    .practice-status { color: var(--blue); font-size: 11px; font-weight: 700; }
+
+    .lower-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .9fr); gap: 18px; align-items: stretch; }
+    .panel { min-width: 0; padding: 20px; }
+    .panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 15px; }
+    .panel-heading p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .chart-legend { display: flex; gap: 12px; color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+    .legend-dot.mint { background: var(--mint); }
+    .chart-wrap { min-height: 195px; }
+    #growth-chart { display: block; width: 100%; height: auto; overflow: visible; }
+    .chart-empty { display: grid; place-items: center; min-height: 170px; color: var(--muted); font-size: 12px; text-align: center; }
+
+    .badge-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+    .badge {
+      display: flex; align-items: center; gap: 9px; min-height: 58px; padding: 9px 10px;
+      border: 1px solid var(--line); border-radius: 14px; background: var(--surface-soft);
+    }
+    .badge-icon { display: grid; place-items: center; flex: 0 0 34px; width: 34px; height: 34px; border-radius: 11px; background: var(--blue-soft); font-size: 17px; filter: grayscale(1); opacity: .45; }
+    .badge.earned .badge-icon { filter: none; opacity: 1; }
+    .badge-title { display: block; font-size: 11px; font-weight: 800; line-height: 1.3; }
+    .badge-description { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; line-height: 1.35; }
+
+    .history-panel { margin-top: 18px; padding: 20px; }
+    .history-actions { display: flex; gap: 7px; }
+    .history-actions button { padding: 8px 10px; font-size: 10px; }
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table { width: 100%; min-width: 670px; border-collapse: collapse; text-align: left; }
+    th { padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10px; font-weight: 700; white-space: nowrap; }
+    td { padding: 12px; border-bottom: 1px solid var(--line); font-size: 11px; white-space: nowrap; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .mode-pill { display: inline-block; padding: 4px 8px; border-radius: 8px; background: var(--blue-soft); color: var(--blue); font-size: 10px; font-weight: 700; }
+    .empty-row td { height: 90px; color: var(--muted); text-align: center; }
+    .footer-note { margin: 17px 0 0; color: var(--muted); font-size: 10px; text-align: center; }
+
+    .modal-backdrop { position: fixed; z-index: 10; inset: 0; display: none; place-items: center; padding: 18px; background: rgba(15, 23, 42, .46); }
+    .modal-backdrop.open { display: grid; }
+    .result-modal { width: min(410px, 100%); padding: 25px; border: 1px solid var(--line); border-radius: 23px; background: var(--surface); box-shadow: 0 24px 70px rgba(0, 0, 0, .2); text-align: center; }
+    .result-emoji { font-size: 38px; }
+    .result-modal h2 { margin: 5px 0 3px; font-size: 22px; letter-spacing: -.05em; }
+    .result-modal p { margin: 0; color: var(--muted); font-size: 12px; }
+    .result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 19px 0; }
+    .result-stat { padding: 11px 6px; border-radius: 13px; background: var(--surface-soft); }
+    .result-stat strong { display: block; font-size: 20px; letter-spacing: -.04em; }
+    .result-stat span { display: block; margin-top: 2px; color: var(--muted); font-size: 10px; }
+    .result-actions { display: flex; justify-content: center; gap: 8px; }
+
+    @media (max-width: 760px) {
+      .profile-card { grid-template-columns: repeat(3, 1fr); }
+      .profile-intro { grid-column: 1 / -1; }
+      .lower-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .page-shell { width: min(100% - 22px, 480px); padding-top: 17px; }
+      .topbar { margin-bottom: 21px; }
+      .brand-mark { width: 40px; height: 40px; }
+      .brand-name { font-size: 16px; }
+      .button-secondary { padding: 9px 10px; font-size: 11px; }
+      .hero { display: block; margin-bottom: 17px; }
+      .hero-copy { font-size: 12px; }
+      .local-note { display: block; margin-top: 7px; }
+      .profile-card { gap: 8px; padding: 14px; }
+      .field input { padding: 9px 8px; font-size: 12px; }
+      .dashboard { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+      .metric { padding: 13px; }
+      .practice-head { display: block; padding: 15px; }
+      .practice-controls { margin-top: 11px; }
+      .practice-controls .segmented { flex: 1 1 auto; }
+      .segmented { flex: 1; }
+      .segmented button { flex: 1; padding-inline: 5px; }
+      .practice-body { padding: 15px; }
+      .passage { min-height: 94px; padding: 14px; line-height: 1.8; }
+      .typing-input { min-height: 100px; padding: 13px; }
+      .practice-footer { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .panel, .history-panel { padding: 15px; }
+      .panel-heading { flex-wrap: wrap; }
+      .chart-legend { font-size: 9px; }
+      .badge-grid { gap: 7px; }
+      .badge { padding: 8px 7px; }
+      .badge-icon { flex-basis: 30px; width: 30px; height: 30px; }
+      .history-panel .panel-heading { align-items: flex-start; }
+      .history-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">⌨</div>
+        <div>
+          <p class="brand-name">키보드 탐험대</p>
+          <p class="brand-caption">오늘의 연습이 실력이 돼요</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="button-secondary" id="export-button" type="button">⬇ 기록 내보내기</button>
+        <button class="icon-button" id="theme-button" type="button" aria-label="다크 모드 전환" title="다크 모드 전환">🌙</button>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <span class="eyebrow">MY TYPING PORTFOLIO</span>
+        <h1 id="page-title">나의 타자 연습실</h1>
+        <p class="hero-copy">꾸준히 연습하고, 어제보다 한 걸음 더 성장해 봐요!</p>
+      </div>
+      <span class="local-note">🔒 기록은 이 기기에만 저장돼요</span>
+    </section>
+
+    <section class="profile-card" aria-label="학생 프로필">
+      <div class="profile-intro">
+        <strong>내 프로필</strong>
+        <span>연습 기록에 표시할 정보를 입력해요</span>
+      </div>
+      <div class="field">
+        <label for="grade-input">학년</label>
+        <input id="grade-input" type="text" inputmode="numeric" maxlength="8" placeholder="예: 2학년">
+      </div>
+      <div class="field">
+        <label for="class-input">반</label>
+        <input id="class-input" type="text" inputmode="numeric" maxlength="8" placeholder="예: 3반">
+      </div>
+      <div class="field">
+        <label for="name-input">이름 또는 별명</label>
+        <input id="name-input" type="text" maxlength="20" placeholder="예: 타자왕">
+      </div>
+    </section>
+
+    <p class="storage-message" id="storage-message" role="status"></p>
+
+    <section class="dashboard" aria-label="실시간 타자 기록">
+      <div class="metric">
+        <div class="metric-label">현재 타수 <span class="metric-icon">⚡</span></div>
+        <strong class="metric-value" id="cpm-value">0<span class="metric-unit">CPM</span></strong>
+      </div>
+      <div class="metric">
+        <div class="metric-label">영문 환산 <span class="metric-icon">⌨️</span></div>
+        <strong class="metric-value" id="wpm-value">0<span class="metric-unit">WPM</span></strong>
+      </div>
+      <div class="metric">
+        <div class="metric-label">정확도 <span class="metric-icon">🎯</span></div>
+        <strong class="metric-value" id="accuracy-value">100<span class="metric-unit">%</span></strong>
+      </div>
+      <div class="metric">
+        <div class="metric-label">연습 시간 <span class="metric-icon">⏱️</span></div>
+        <strong class="metric-value" id="time-value">0<span class="metric-unit">초</span></strong>
+      </div>
+    </section>
+
+    <section class="practice-card" aria-labelledby="practice-title">
+      <div class="practice-head">
+        <h2 class="section-title" id="practice-title">오늘의 타자 연습</h2>
+        <div class="practice-controls">
+          <div class="segmented" role="group" aria-label="연습 언어">
+            <button type="button" data-language="ko" class="active" aria-pressed="true">가 한글</button>
+            <button type="button" data-language="en" aria-pressed="false">A English</button>
+          </div>
+          <div class="segmented" role="group" aria-label="글 길이">
+            <button type="button" data-length="short" class="active" aria-pressed="true">짧은 글</button>
+            <button type="button" data-length="long" aria-pressed="false">긴 글</button>
+          </div>
+          <button class="button-primary" id="new-passage-button" type="button">↻ 새 글</button>
+        </div>
+      </div>
+      <div class="practice-body">
+        <div class="passage-meta">
+          <span class="passage-tag" id="passage-tag">한글 · 짧은 글</span>
+          <span class="passage-count" id="passage-count">0 / 0자</span>
+        </div>
+        <div class="passage" id="passage-display" aria-label="따라 입력할 글"></div>
+        <textarea class="typing-input" id="typing-input" rows="3" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="여기를 누르고 제시된 글을 입력해 보세요!"></textarea>
+        <div class="practice-footer">
+          <p class="hint">💡 글을 다 입력하거나 Enter를 누르면 기록돼요. 복사·붙여넣기 없이 직접 입력해 봐요.</p>
+          <span class="practice-status" id="practice-status" aria-live="polite">준비됐어요!</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="lower-grid">
+      <section class="panel" aria-labelledby="growth-title">
+        <div class="panel-heading">
+          <div>
+            <h2 class="section-title" id="growth-title">나의 성장 그래프</h2>
+            <p>최근 연습 10회의 타수와 정확도</p>
+          </div>
+          <div class="chart-legend" aria-label="그래프 범례">
+            <span class="legend-item"><i class="legend-dot"></i>타수</span>
+            <span class="legend-item"><i class="legend-dot mint"></i>정확도</span>
+          </div>
+        </div>
+        <div class="chart-wrap" id="chart-wrap">
+          <svg id="growth-chart" viewBox="0 0 700 190" role="img" aria-label="최근 연습 성장 그래프"></svg>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="badge-title">
+        <div class="panel-heading">
+          <div>
+            <h2 class="section-title" id="badge-title">도전 배지</h2>
+            <p>연습을 이어가며 배지를 모아 보세요</p>
+          </div>
+          <span class="mode-pill" id="badge-count">0 / 5 획득</span>
+        </div>
+        <div class="badge-grid" id="badge-grid"></div>
+      </section>
+    </div>
+
+    <section class="panel history-panel" aria-labelledby="history-title">
+      <div class="panel-heading">
+        <div>
+          <h2 class="section-title" id="history-title">연습 기록</h2>
+          <p id="history-caption">완료한 연습이 최신순으로 쌓여요</p>
+        </div>
+        <div class="history-actions">
+          <button class="button-secondary" id="export-button-bottom" type="button">⬇ CSV 저장</button>
+          <button class="button-secondary" id="reset-button" type="button">🗑 기록 초기화</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>날짜</th><th>연습</th><th>제시문</th><th>평균 타수</th><th>최고 타수</th><th>정확도</th><th>시간</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+    </section>
+    <p class="footer-note">매일 조금씩, 나만의 속도로 성장해요 ✨</p>
+  </main>
+
+  <div class="modal-backdrop" id="result-backdrop" role="dialog" aria-modal="true" aria-labelledby="result-title">
+    <section class="result-modal">
+      <div class="result-emoji" aria-hidden="true">🎉</div>
+      <h2 id="result-title">연습 완료!</h2>
+      <p id="result-caption">멋져요! 기록을 저장했어요.</p>
+      <div class="result-stats">
+        <div class="result-stat"><strong id="result-cpm">0</strong><span>평균 타수</span></div>
+        <div class="result-stat"><strong id="result-accuracy">0%</strong><span>정확도</span></div>
+        <div class="result-stat"><strong id="result-time">0초</strong><span>연습 시간</span></div>
+      </div>
+      <div class="result-actions">
+        <button class="button-secondary" id="close-result-button" type="button">닫기</button>
+        <button class="button-primary" id="continue-button" type="button">다음 글 연습하기 →</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "keyboardExplorer.v1";
+      const passages = {
+        ko: {
+          short: [
+            "작은 습관이 모여 큰 변화를 만든다.",
+            "천천히 가도 멈추지 않으면 괜찮아.",
+            "오늘의 노력은 내일의 자신감을 만든다.",
+            "배움은 질문에서 시작된다.",
+            "실수는 더 잘하는 방법을 알려 주는 힌트다.",
+            "서로 다른 생각이 모이면 새로운 답이 보인다.",
+            "책 한 권에는 새로운 세상이 담겨 있다.",
+            "친절한 말 한마디가 하루를 바꿀 수 있다.",
+            "비 온 뒤에는 무지개가 뜨기도 한다.",
+            "계획을 세우고 하나씩 실천해 보자.",
+            "건강한 지구를 위해 오늘 할 수 있는 일을 찾자.",
+            "마음이 급할수록 한 번 더 천천히 읽어 보자."
+          ],
+          long: [
+            "숲은 여러 생물이 함께 살아가는 커다란 집이다. 나무는 뿌리로 물을 빨아들이고 잎으로 햇빛을 받아 자란다. 나무 사이에는 새와 곤충이 살고, 떨어진 잎은 흙 속 작은 생물의 먹이가 된다. 숲을 지키는 일은 그 안에 사는 생명과 우리의 미래를 함께 지키는 일이다.",
+            "물은 바다와 강에서 햇빛을 받아 수증기가 되고, 하늘로 올라가 구름이 된다. 구름 속 물방울이 모이면 비나 눈으로 땅에 내려온다. 땅에 스며든 물은 식물과 동물에게 생명을 주고 다시 강을 따라 바다로 흐른다. 이처럼 물은 지구를 돌며 생태계를 이어 준다.",
+            "별은 아주 멀리 떨어져 있지만 밤하늘에서 빛을 내며 우리에게 우주의 크기를 생각하게 한다. 별빛이 지구에 도착하기까지 오랜 시간이 걸리기도 한다. 그래서 밤하늘을 바라보는 것은 과거의 빛을 만나는 일과 같다. 계절마다 보이는 별자리가 달라지는 이유도 지구가 태양 주위를 돌기 때문이다.",
+            "옛날 사람들은 물건을 사고팔 때 필요한 물건을 직접 바꾸곤 했다. 하지만 서로 원하는 물건이 맞지 않으면 거래가 어려웠다. 사람들이 금속 동전과 종이돈을 쓰기 시작하면서 물건의 가치를 비교하고 저장하기가 쉬워졌다. 오늘날에는 카드와 휴대전화로도 돈을 주고받지만, 믿을 수 있는 약속이 거래의 바탕이라는 점은 같다.",
+            "도시는 많은 사람이 함께 생활하는 공간이다. 학교와 도서관, 공원과 시장은 사람들이 배우고 쉬고 필요한 것을 얻도록 돕는다. 모두가 편리하게 지내려면 길을 안전하게 이용하고 공공장소를 깨끗하게 쓰는 약속이 필요하다. 좋은 도시는 건물만 멋진 곳이 아니라 서로를 배려하는 사람이 함께 만드는 곳이다.",
+            "종이비행기를 멀리 날리려면 날개의 모양과 접는 방법을 바꾸어 실험해 볼 수 있다. 한 번에 여러 가지를 바꾸면 무엇이 영향을 주었는지 알기 어렵다. 그래서 한 가지 조건만 바꾸고 결과를 기록하면 더 정확히 비교할 수 있다. 이런 관찰과 실험의 태도는 과학뿐 아니라 새로운 문제를 해결할 때에도 도움이 된다."
+          ]
+        },
+        en: {
+          short: [
+            "Small steps can lead to big changes.",
+            "A good question can open a new door.",
+            "Take a deep breath and try one more time.",
+            "Kind words can brighten someone's day.",
+            "Every mistake is a chance to learn.",
+            "Books let us travel without moving our feet.",
+            "Teamwork makes hard work feel lighter.",
+            "The best time to start is now.",
+            "Curiosity turns the world into a classroom.",
+            "A healthy planet is a home for everyone.",
+            "Practice today and surprise yourself tomorrow.",
+            "Be proud of the progress you make."
+          ],
+          long: [
+            "A forest is a busy home shared by many living things. Trees use sunlight, air, and water to grow. Birds build nests in branches, while insects find food among leaves and flowers. When leaves fall, tiny organisms in the soil help them break down. A healthy forest gives animals shelter and helps keep the air and water clean.",
+            "Water travels around Earth in a repeating journey. Heat from the Sun turns water in oceans and lakes into vapor. The vapor rises, cools, and forms clouds. When tiny drops join together, rain or snow falls back to the ground. Some water flows into rivers, and some sinks into the soil. In time, much of it returns to the sea.",
+            "The Moon does not make its own light. We see sunlight reflecting from its surface, and the shape we see changes as the Moon moves around Earth. These changing shapes are called phases. A full moon looks bright and round, while a new moon is hard to see. Watching the Moon over several weeks is a simple way to notice patterns in space.",
+            "Long ago, people shared goods by trading one thing for another. This worked best when each person wanted what the other person had. Coins made trading easier because people could use the same object to show value. Today, people may pay with a card or a phone, but every exchange still depends on trust and clear agreements.",
+            "A city is more than a collection of buildings. Parks give people room to play, libraries offer a quiet place to learn, and buses help neighbors travel. Shared spaces work best when everyone follows simple rules and cares for the people around them. Small acts, such as keeping a path clear, can make a city friendlier for all.",
+            "A paper airplane can be tested like a small science project. First, fold two planes in the same way and throw them from the same place. Then change one thing, such as the wing shape, and compare how far each plane flies. Writing down the results helps you notice a pattern. Careful experiments turn a curious idea into useful knowledge."
+          ]
+        }
+      };
+
+      const defaultState = {
+        profile: { grade: "", classroom: "", name: "" },
+        records: [],
+        theme: "light"
+      };
+
+      const $ = (selector) => document.querySelector(selector);
+      const ui = {
+        grade: $("#grade-input"),
+        classroom: $("#class-input"),
+        name: $("#name-input"),
+        cpm: $("#cpm-value"),
+        wpm: $("#wpm-value"),
+        accuracy: $("#accuracy-value"),
+        time: $("#time-value"),
+        passage: $("#passage-display"),
+        passageTag: $("#passage-tag"),
+        passageCount: $("#passage-count"),
+        typing: $("#typing-input"),
+        status: $("#practice-status"),
+        chart: $("#growth-chart"),
+        chartWrap: $("#chart-wrap"),
+        history: $("#history-body"),
+        historyCaption: $("#history-caption"),
+        badges: $("#badge-grid"),
+        badgeCount: $("#badge-count"),
+        storageMessage: $("#storage-message"),
+        modal: $("#result-backdrop")
+      };
+
+      let state = loadState();
+      let language = "ko";
+      let length = "short";
+      let currentPassage = null;
+      let startedAt = null;
+      let timerId = null;
+      let peakCpm = 0;
+      let completed = false;
+      let composing = false;
+      let previousPassageIndex = -1;
+
+      function loadState() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (!saved) return structuredClone(defaultState);
+          const parsed = JSON.parse(saved);
+          if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.records)) {
+            throw new Error("저장된 기록 형식이 올바르지 않습니다.");
+          }
+          return {
+            profile: { ...defaultState.profile, ...(parsed.profile || {}) },
+            records: parsed.records.filter((record) => record && typeof record === "object"),
+            theme: parsed.theme === "dark" ? "dark" : "light"
+          };
+        } catch (error) {
+          console.error("저장된 기록을 불러오지 못했습니다.", error);
+          showStorageMessage("저장된 기록을 읽지 못했어요. 브라우저 저장 공간을 확인해 주세요.");
+          return structuredClone(defaultState);
+        }
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          ui.storageMessage.classList.remove("visible");
+        } catch (error) {
+          console.error("기록 저장에 실패했습니다.", error);
+          showStorageMessage("기록을 저장하지 못했어요. 브라우저 저장 공간을 확인해 주세요.");
+        }
+      }
+
+      function showStorageMessage(message) {
+        ui.storageMessage.textContent = message;
+        ui.storageMessage.classList.add("visible");
+      }
+
+      function escapeText(text) {
+        return document.createTextNode(text);
+      }
+
+      function selectPassage() {
+        const options = passages[language][length];
+        let index = Math.floor(Math.random() * options.length);
+        if (options.length > 1 && index === previousPassageIndex) index = (index + 1) % options.length;
+        previousPassageIndex = index;
+        return { text: options[index], index, total: options.length };
+      }
+
+      function renderPassage() {
+        currentPassage = selectPassage();
+        startedAt = null;
+        peakCpm = 0;
+        completed = false;
+        if (timerId) window.clearInterval(timerId);
+        timerId = null;
+        ui.typing.disabled = false;
+        ui.typing.value = "";
+        ui.passageCount.textContent = `0 / ${Array.from(currentPassage.text).length}자`;
+        ui.passageTag.textContent = `${language === "ko" ? "한글" : "영어"} · ${length === "short" ? "짧은 글" : "긴 글"}`;
+        ui.status.textContent = "준비됐어요!";
+        renderComparison();
+        updateMetrics();
+        ui.typing.focus({ preventScroll: true });
+      }
+
+      function renderComparison() {
+        const target = Array.from(currentPassage.text);
+        const typed = Array.from(ui.typing.value);
+        const fragment = document.createDocumentFragment();
+        target.forEach((character, index) => {
+          const span = document.createElement("span");
+          span.textContent = character;
+          if (index < typed.length) span.className = typed[index] === character ? "correct" : "incorrect";
+          else if (index === typed.length && !completed) span.className = "caret";
+          fragment.appendChild(span);
+        });
+        ui.passage.replaceChildren(fragment);
+        ui.passageCount.textContent = `${Math.min(typed.length, target.length)} / ${target.length}자`;
+      }
+
+      function getLiveStats() {
+        const typed = Array.from(ui.typing.value);
+        const target = Array.from(currentPassage.text);
+        const correct = typed.reduce((total, character, index) => total + (character === target[index] ? 1 : 0), 0);
+        const elapsed = startedAt ? Math.max(0, (Date.now() - startedAt) / 1000) : 0;
+        const cpm = elapsed > 0 ? Math.round(typed.length / (Math.max(elapsed, 1) / 60)) : 0;
+        const wpm = Math.round(cpm / 5);
+        const accuracy = typed.length ? Math.round((correct / typed.length) * 100) : 100;
+        return { typed, correct, elapsed, cpm, wpm, accuracy };
+      }
+
+      function updateMetrics() {
+        const stats = getLiveStats();
+        peakCpm = Math.max(peakCpm, stats.cpm);
+        ui.cpm.innerHTML = `${stats.cpm}<span class="metric-unit">CPM</span>`;
+        ui.wpm.innerHTML = `${stats.wpm}<span class="metric-unit">WPM</span>`;
+        ui.accuracy.innerHTML = `${stats.accuracy}<span class="metric-unit">%</span>`;
+        ui.time.innerHTML = `${Math.floor(stats.elapsed)}<span class="metric-unit">초</span>`;
+      }
+
+      function onTyping() {
+        if (completed) return;
+        if (ui.typing.value.length && !startedAt) {
+          startedAt = Date.now();
+          timerId = window.setInterval(updateMetrics, 250);
+          ui.status.textContent = "집중해서 입력 중!";
+        }
+        renderComparison();
+        updateMetrics();
+        if (!composing && Array.from(ui.typing.value).length >= Array.from(currentPassage.text).length) finishPractice();
+      }
+
+      function finishPractice() {
+        if (completed || !ui.typing.value.length) return;
+        completed = true;
+        if (!startedAt) startedAt = Date.now();
+        if (timerId) window.clearInterval(timerId);
+        timerId = null;
+        const stats = getLiveStats();
+        const duration = Math.max(1, Math.ceil(stats.elapsed));
+        const avgCpm = Math.round(stats.typed.length / (Math.max(stats.elapsed, 1) / 60));
+        const record = {
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          completedAt: new Date().toISOString(),
+          dateKey: localDateKey(new Date()),
+          language,
+          length,
+          title: currentPassage.text.slice(0, 42),
+          avgCpm,
+          maxCpm: Math.max(peakCpm, avgCpm),
+          wpm: Math.round(avgCpm / 5),
+          accuracy: stats.accuracy,
+          duration
+        };
+        state.records.unshift(record);
+        saveState();
+        renderComparison();
+        ui.typing.disabled = true;
+        ui.status.textContent = "기록을 저장했어요! 잘했어요 🎉";
+        renderPortfolio();
+        $("#result-cpm").textContent = String(record.avgCpm);
+        $("#result-accuracy").textContent = `${record.accuracy}%`;
+        $("#result-time").textContent = `${record.duration}초`;
+        $("#result-caption").textContent = `${language === "ko" ? "한글" : "영어"} · ${length === "short" ? "짧은 글" : "긴 글"} 연습을 완료했어요.`;
+        ui.modal.classList.add("open");
+        $("#close-result-button").focus();
+      }
+
+      function localDateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function formatDate(isoDate) {
+        const date = new Date(isoDate);
+        if (Number.isNaN(date.getTime())) return "날짜 없음";
+        return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+      }
+
+      function renderHistory() {
+        ui.history.replaceChildren();
+        ui.historyCaption.textContent = `총 ${state.records.length}회 연습 · 완료한 기록이 최신순으로 쌓여요`;
+        if (!state.records.length) {
+          const row = document.createElement("tr");
+          row.className = "empty-row";
+          const cell = document.createElement("td");
+          cell.colSpan = 7;
+          cell.textContent = "아직 기록이 없어요. 첫 연습을 시작해 볼까요?";
+          row.appendChild(cell);
+          ui.history.appendChild(row);
+          return;
+        }
+        state.records.forEach((record) => {
+          const row = document.createElement("tr");
+          const mode = `${record.language === "en" ? "영어" : "한글"} · ${record.length === "long" ? "긴 글" : "짧은 글"}`;
+          const values = [
+            formatDate(record.completedAt),
+            mode,
+            record.title || "연습 글",
+            `${Number(record.avgCpm) || 0} 타`,
+            `${Number(record.maxCpm) || 0} 타`,
+            `${Number(record.accuracy) || 0}%`,
+            `${Number(record.duration) || 0}초`
+          ];
+          values.forEach((value, index) => {
+            const cell = document.createElement("td");
+            if (index === 1) {
+              const pill = document.createElement("span");
+              pill.className = "mode-pill";
+              pill.textContent = value;
+              cell.appendChild(pill);
+            } else {
+              cell.textContent = value;
+            }
+            row.appendChild(cell);
+          });
+          ui.history.appendChild(row);
+        });
+      }
+
+      function svgElement(tag, attributes = {}) {
+        const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, String(value)));
+        return element;
+      }
+
+      function renderChart() {
+        const records = state.records.slice(0, 10).reverse();
+        ui.chart.replaceChildren();
+        if (!records.length) {
+          ui.chartWrap.innerHTML = '<div class="chart-empty">연습을 완료하면 성장 그래프가 나타나요 📈</div>';
+          return;
+        }
+        if (!ui.chart.isConnected) {
+          ui.chartWrap.replaceChildren(ui.chart);
+        }
+        const width = 700;
+        const top = 14;
+        const bottom = 153;
+        const left = 34;
+        const right = 18;
+        const plotWidth = width - left - right;
+        const plotHeight = bottom - top;
+        const maxCpm = Math.max(100, ...records.map((record) => Number(record.avgCpm) || 0)) * 1.15;
+        const xAt = (index) => records.length === 1 ? left + plotWidth / 2 : left + (plotWidth * index) / (records.length - 1);
+        [0, .5, 1].forEach((ratio) => {
+          const y = bottom - plotHeight * ratio;
+          ui.chart.appendChild(svgElement("line", { x1: left, y1: y, x2: width - right, y2: y, stroke: "var(--line)", "stroke-width": 1 }));
+          const label = svgElement("text", { x: 0, y: y + 4, fill: "var(--muted)", "font-size": 10 });
+          label.textContent = String(Math.round(maxCpm * ratio));
+          ui.chart.appendChild(label);
+        });
+        const points = [];
+        records.forEach((record, index) => {
+          const x = xAt(index);
+          const cpm = Number(record.avgCpm) || 0;
+          const accuracy = Math.max(0, Math.min(100, Number(record.accuracy) || 0));
+          const barHeight = (cpm / maxCpm) * plotHeight;
+          const barWidth = Math.min(34, plotWidth / Math.max(records.length * 1.7, 1));
+          ui.chart.appendChild(svgElement("rect", {
+            x: x - barWidth / 2, y: bottom - barHeight, width: barWidth, height: Math.max(2, barHeight),
+            rx: 6, fill: "var(--blue)", opacity: .78
+          }));
+          const pointY = bottom - (accuracy / 100) * plotHeight;
+          points.push(`${x},${pointY}`);
+          const label = svgElement("text", { x, y: 177, fill: "var(--muted)", "font-size": 10, "text-anchor": "middle" });
+          label.textContent = String(index + 1);
+          ui.chart.appendChild(label);
+        });
+        if (points.length > 1) {
+          ui.chart.appendChild(svgElement("polyline", { points: points.join(" "), fill: "none", stroke: "var(--mint)", "stroke-width": 3, "stroke-linecap": "round", "stroke-linejoin": "round" }));
+        }
+        points.forEach((point) => {
+          const [cx, cy] = point.split(",");
+          ui.chart.appendChild(svgElement("circle", { cx, cy, r: 4, fill: "var(--mint)", stroke: "var(--surface)", "stroke-width": 2 }));
+        });
+        const description = svgElement("title");
+        description.textContent = "최근 연습 기록의 평균 타수(막대)와 정확도(선)";
+        ui.chart.prepend(description);
+      }
+
+      const badgeDefinitions = [
+        { id: "first", icon: "🌱", title: "첫걸음", description: "첫 연습 완료", earned: (records) => records.length >= 1 },
+        { id: "accurate", icon: "🎯", title: "정확한 손끝", description: "정확도 98% 이상", earned: (records) => records.some((record) => record.accuracy >= 98) },
+        { id: "speed300", icon: "⚡", title: "스피드 300", description: "최고 타수 300타", earned: (records) => records.some((record) => record.maxCpm >= 300) },
+        { id: "speed500", icon: "🚀", title: "스피드 500", description: "최고 타수 500타", earned: (records) => records.some((record) => record.maxCpm >= 500) },
+        { id: "streak3", icon: "🔥", title: "3일 연속", description: "사흘 연속 연습", earned: hasThreeDayStreak }
+      ];
+
+      function hasThreeDayStreak(records) {
+        const days = [...new Set(records.map((record) => record.dateKey).filter(Boolean))].sort();
+        const dayMillis = 24 * 60 * 60 * 1000;
+        let streak = 1;
+        for (let index = 1; index < days.length; index += 1) {
+          const previous = new Date(`${days[index - 1]}T00:00:00`);
+          const current = new Date(`${days[index]}T00:00:00`);
+          const difference = Math.round((current - previous) / dayMillis);
+          streak = difference === 1 ? streak + 1 : difference === 0 ? streak : 1;
+          if (streak >= 3) return true;
+        }
+        return days.length > 0 && streak >= 3;
+      }
+
+      function renderBadges() {
+        ui.badges.replaceChildren();
+        let earnedCount = 0;
+        badgeDefinitions.forEach((definition) => {
+          const earned = definition.earned(state.records);
+          if (earned) earnedCount += 1;
+          const card = document.createElement("div");
+          card.className = `badge${earned ? " earned" : ""}`;
+          const icon = document.createElement("span");
+          icon.className = "badge-icon";
+          icon.textContent = definition.icon;
+          const copy = document.createElement("span");
+          const title = document.createElement("span");
+          title.className = "badge-title";
+          title.textContent = definition.title;
+          const description = document.createElement("span");
+          description.className = "badge-description";
+          description.textContent = definition.description;
+          copy.append(title, description);
+          card.append(icon, copy);
+          ui.badges.appendChild(card);
+        });
+        ui.badgeCount.textContent = `${earnedCount} / ${badgeDefinitions.length} 획득`;
+      }
+
+      function renderPortfolio() {
+        renderHistory();
+        renderChart();
+        renderBadges();
+      }
+
+      function applyTheme() {
+        document.documentElement.dataset.theme = state.theme;
+        $("#theme-button").textContent = state.theme === "dark" ? "☀️" : "🌙";
+        $("#theme-button").setAttribute("aria-label", state.theme === "dark" ? "라이트 모드 전환" : "다크 모드 전환");
+      }
+
+      function setActiveButton(selector, attribute, value) {
+        document.querySelectorAll(selector).forEach((button) => {
+          const active = button.dataset[attribute] === value;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-pressed", String(active));
+        });
+      }
+
+      function csvCell(value) {
+        let text = String(value ?? "");
+        if (/^[=+\-@]/.test(text)) text = `'${text}`;
+        return `"${text.replace(/"/g, '""')}"`;
+      }
+
+      function exportCsv() {
+        if (!state.records.length) {
+          window.alert("내보낼 기록이 아직 없어요. 연습을 완료한 뒤 다시 시도해 주세요.");
+          return;
+        }
+        const header = ["날짜", "이름", "학년", "반", "언어", "글 길이", "제시문", "평균 타수(CPM)", "최고 타수(CPM)", "정확도(%)", "시간(초)"];
+        const rows = state.records.map((record) => [
+          formatDate(record.completedAt),
+          state.profile.name,
+          state.profile.grade,
+          state.profile.classroom,
+          record.language === "en" ? "영어" : "한글",
+          record.length === "long" ? "긴 글" : "짧은 글",
+          record.title,
+          record.avgCpm,
+          record.maxCpm,
+          record.accuracy,
+          record.duration
+        ]);
+        const csv = "\uFEFF" + [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\r\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `타자연습기록_${localDateKey(new Date())}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function resetRecords() {
+        if (!state.records.length) {
+          window.alert("초기화할 연습 기록이 없어요.");
+          return;
+        }
+        if (!window.confirm("저장된 타자 연습 기록을 모두 지울까요?\n프로필 정보는 그대로 유지됩니다. 이 작업은 되돌릴 수 없어요.")) return;
+        state.records = [];
+        saveState();
+        renderPortfolio();
+      }
+
+      function syncProfile() {
+        ui.grade.value = state.profile.grade;
+        ui.classroom.value = state.profile.classroom;
+        ui.name.value = state.profile.name;
+      }
+
+      function init() {
+        syncProfile();
+        applyTheme();
+        renderPortfolio();
+        renderPassage();
+
+        [ui.grade, ui.classroom, ui.name].forEach((input) => {
+          input.addEventListener("input", () => {
+            state.profile.grade = ui.grade.value.trim();
+            state.profile.classroom = ui.classroom.value.trim();
+            state.profile.name = ui.name.value.trim();
+            saveState();
+          });
+        });
+
+        document.querySelectorAll("[data-language]").forEach((button) => {
+          button.addEventListener("click", () => {
+            language = button.dataset.language;
+            setActiveButton("[data-language]", "language", language);
+            renderPassage();
+          });
+        });
+        document.querySelectorAll("[data-length]").forEach((button) => {
+          button.addEventListener("click", () => {
+            length = button.dataset.length;
+            setActiveButton("[data-length]", "length", length);
+            renderPassage();
+          });
+        });
+        $("#new-passage-button").addEventListener("click", renderPassage);
+        ui.typing.addEventListener("compositionstart", () => { composing = true; });
+        ui.typing.addEventListener("compositionend", () => {
+          composing = false;
+          onTyping();
+        });
+        ui.typing.addEventListener("input", onTyping);
+        ui.typing.addEventListener("paste", (event) => {
+          event.preventDefault();
+          ui.status.textContent = "타자 연습은 직접 입력해 주세요!";
+        });
+        ui.typing.addEventListener("drop", (event) => event.preventDefault());
+        ui.typing.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" && !event.shiftKey && !event.isComposing && !composing) {
+            event.preventDefault();
+            finishPractice();
+          }
+        });
+        $("#theme-button").addEventListener("click", () => {
+          state.theme = state.theme === "dark" ? "light" : "dark";
+          applyTheme();
+          saveState();
+          renderChart();
+        });
+        $("#export-button").addEventListener("click", exportCsv);
+        $("#export-button-bottom").addEventListener("click", exportCsv);
+        $("#reset-button").addEventListener("click", resetRecords);
+        $("#close-result-button").addEventListener("click", () => {
+          ui.modal.classList.remove("open");
+          renderPassage();
+        });
+        $("#continue-button").addEventListener("click", () => {
+          ui.modal.classList.remove("open");
+          renderPassage();
+        });
+        ui.modal.addEventListener("click", (event) => {
+          if (event.target === ui.modal) {
+            ui.modal.classList.remove("open");
+            renderPassage();
+          }
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && ui.modal.classList.contains("open")) {
+            ui.modal.classList.remove("open");
+            renderPassage();
+          }
+        });
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
